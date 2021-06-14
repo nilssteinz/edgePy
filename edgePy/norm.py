@@ -21,7 +21,7 @@ class norm:
             raise TypeError("not a DataFrame used")
         self.data = data
 
-    def _cpm(
+    def __cpm(
         self,
         data: pd.DataFrame = None,
         normalized_lib_size: bool = False,
@@ -43,7 +43,7 @@ class norm:
             return np.log2(data)
         return data
 
-    def _rmpk(
+    def __rmpk(
         self,
         data: pd.DataFrame = None,
         log: bool = False,
@@ -63,7 +63,7 @@ class norm:
             return np.log(data)
         return data
 
-    def __lib_size(self, data: pd.DataFrame = None, lib_size: pd.Index or slice = None):
+    def __lib_select(self, data: pd.DataFrame = None, lib_size: pd.Index or slice = None):
         """
 
         :param data:
@@ -73,9 +73,11 @@ class norm:
         data_cp = copy.deepcopy(data)
         if lib_size:
             data_cp = data_cp.iloc[lib_size]
+        if len(data_cp.index) <2:
+            raise ArithmeticError("data set is to small for Normalisation")
         return data_cp
 
-    def cmp(
+    def cpm(
         self,
         data: pd.DataFrame = None,
         normalized_lib_size: bool = False,
@@ -95,8 +97,8 @@ class norm:
         if data is None:
             data = self.data
             print(data)
-        data_cp = self.__lib_size(data, lib_size)
-        data_cp = self._cpm(data_cp, normalized_lib_size, log, prior_count)
+        data_cp = self.__lib_select(data, lib_size)
+        data_cp = self.__cpm(data_cp, normalized_lib_size, log, prior_count)
 
         return data_cp
 
@@ -109,16 +111,16 @@ class norm:
         prior_count: float = 0,
         gene_length: list = None,
     ):
-        data_cp = self.__lib_size(data, lib_size)
-        data_cp = self._cpm(
+        data_cp = self.__lib_select(data, lib_size)
+        data_cp = self.__cpm(
             data_cp, normalized_lib_size, log=False, prior_count=prior_count
         )
-        data = self._rmpk(data_cp, log, gene_length)
+        data = self.__rmpk(data_cp, log, gene_length)
 
         return data
 
     def __call__(self, *args, **kwargs):
         if self.data:
-            return self.cmp()
+            return self.cpm()
         else:
             raise Exception("wrong call")

@@ -36,6 +36,6 @@ if __name__ == "__main__":
         500,
         1000,
     ]
-    print(edgePy(data).norm.cmp())
-    print(edgePy.norm.cmp(data=data))
+    print(edgePy(data).norm.cpm())
+    print(edgePy.norm.cpm(data=data))
     print(edgePy.norm.rmpk(data=data, gene_length=[1000, 500, 1000]))
