@@ -11,7 +11,7 @@ class test_edgePy(unittest.TestCase):
         pass
 
     def test_norm_input(self):
-
+        pass
 
     def test_norm_cpm(self):
         pass
