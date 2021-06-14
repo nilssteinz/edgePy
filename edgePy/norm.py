@@ -47,12 +47,9 @@ class norm:
         :param prior_count:
         :return: data
         """
-        lib_size = data.sum(axis=0)
+        lib_size: pd.DataFrame = data.sum(axis=0)
         if normalized_lib_size:
-            print(lib_size)
-            print( self.factor.transpose())
-            lib_size = lib_size * self.factor
-
+            lib_size = self.factor.to_numpy()[0] * lib_size
         adjusted_prior_count = (
             (int(log) * prior_count) * len(data.columns) * lib_size / lib_size.sum()
         )
