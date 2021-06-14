@@ -1,6 +1,6 @@
 import unittest
 
-from edgePy import edgePy
+from edgePy import norm
 
 
 class test_edgePy(unittest.TestCase):
@@ -11,13 +11,13 @@ class test_edgePy(unittest.TestCase):
         pass
 
     def test_norm_input(self):
-        pass
+
 
     def test_norm_cpm(self):
         pass
 
     def test_norm__cpm_function(self):
-        cpm = edgePy.norm()
+        cpm = norm()
 
 
 
