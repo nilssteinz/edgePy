@@ -2,7 +2,7 @@ import copy
 
 import pandas as pd
 
-from norm import norm
+from cpm import norm
 
 
 class edgePy(object):
@@ -45,7 +45,7 @@ class edgePy(object):
             lib_size=lib_size,
             log=log,
             prior_count=prior_count,
-            gene_length=gene_length
+            gene_length=gene_length,
         )
 
     def __str__(self):

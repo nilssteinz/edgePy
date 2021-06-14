@@ -4,13 +4,13 @@ import numpy as np
 import pandas as pd
 from pandas import testing
 
-from edgePy.norm import norm
+from edgePy.cpm import norm
 
 
 class test_norm(unittest.TestCase):
     def setUp(self) -> None:
         self.main_data = pd.read_csv("../data/data.txt", index_col=0, sep="\t")
-        self.main_factor = pd.read_csv("../data/factors.txt").transpose()
+        self.main_factor = pd.read_csv("../data/factors.txt", dtype=float, header=None)
         self.Norm = norm()
 
     def tearDown(self) -> None:
@@ -44,47 +44,47 @@ class test_norm(unittest.TestCase):
             norm().cpm(data, lib_size=slice(7, 2))
         self.assertTrue(type(e.exception) in [ArithmeticError])
 
-
     def test_CPM_not_norm(self):
         data = self.main_data.copy()
         result = norm().cpm(data, normalized_lib_size=False)
-        target = 2.751621e+01
-        self.assertEqual(target,result.iloc[0,0], "CPM(norm=F) calcualtions are off")
+        target = 2.751621e01
+        self.assertEqual(target, result.iloc[0, 0], "CPM(norm=F) calcualtions are off")
 
     def test_CPM_not_norm_log(self):
         data = self.main_data.copy()
         result = norm().cpm(data, normalized_lib_size=False, log=True)
         target = 3.08325
-        self.assertEqual(target,result.iloc[1,1], "CPM(norm=F, log=T) calcualtions are off")
+        self.assertEqual(
+            target, result.iloc[1, 1], "CPM(norm=F, log=T) calcualtions are off"
+        )
 
     def test_CPM_norm(self):
         data = self.main_data.copy()
         result = norm(factor=self.main_factor).cpm(data, normalized_lib_size=True)
-        target = 2.644534e+01
-        self.assertEqual(target,result.iloc[0,0], "CPM calcualtions are off")
-
-
-
-
-
+        target = 2.644534e01
+        self.assertEqual(target, result.iloc[0, 0], "CPM calcualtions are off")
 
     def test_rpkm_non_norm(self):
         data = self.main_data.copy()
         result = norm().rpkm(data, gene_length=100)
-        target = 2.751621e+02
-        self.assertEqual(target,result.iloc[0,0], "RMPK calcualtions are off")
+        target = 2.751621e02
+        self.assertEqual(target, result.iloc[0, 0], "RMPK calcualtions are off")
 
     def test_rpkm_not_norm_log(self):
         data = self.main_data.copy()
         result = norm().rpkm(data, normalized_lib_size=False, log=True, gene_length=100)
         target = 8.1144
-        self.assertEqual(target,result.iloc[0,0], "rpkm(norm=F, log=T) calcualtions are off")
+        self.assertEqual(
+            target, result.iloc[0, 0], "rpkm(norm=F, log=T) calcualtions are off"
+        )
 
     def test_rpkm_norm(self):
         data = self.main_data.copy()
-        result = norm(factor=self.main_factor).rpkm(data, normalized_lib_size=True, gene_length=100)
-        target = 2.644534e+02
-        self.assertEqual(target,result.iloc[0,0], "rpkm(norm=T) calcualtions are off")
+        result = norm(factor=self.main_factor).rpkm(
+            data, normalized_lib_size=True, gene_length=100
+        )
+        target = 2.644534e02
+        self.assertEqual(target, result.iloc[0, 0], "rpkm(norm=T) calcualtions are off")
 
 
 if __name__ == "__main__":
