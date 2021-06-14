@@ -2,16 +2,51 @@ import copy
 
 import pandas as pd
 
-from edgePy.norm import norm
+from norm import norm
 
 
 class edgePy(object):
-
     norm = norm()
 
     def __init__(self, data: pd.DataFrame):
         self.data = copy.deepcopy(data)
-        self.norm.set_data(data)
+        self.norm_data = None
+        self.factor = [1] * len(data.columns)
+        print(self.factor)
+
+    def do_cpm(
+        self,
+        normalized_lib_size: bool = False,
+        lib_size: pd.Index or slice = None,
+        log: bool = False,
+        prior_count: float = 2,
+    ) -> None:
+        self.norm.set_data(self.data)
+        self.norm.set_factor(self.factor)
+        self.norm_data = self.norm.cpm(
+            normalized_lib_size=normalized_lib_size,
+            lib_size=lib_size,
+            log=log,
+            prior_count=prior_count,
+        )
+
+    def do_rpkm(
+        self,
+        normalized_lib_size: bool = False,
+        lib_size: pd.Index or slice = None,
+        log: bool = False,
+        prior_count: float = 2,
+        gene_length: int = None,
+    ) -> None:
+        self.norm.set_data(self.data)
+        self.norm.set_factor(self.factor)
+        self.norm_data = self.norm.rpkm(
+            normalized_lib_size=normalized_lib_size,
+            lib_size=lib_size,
+            log=log,
+            prior_count=prior_count,
+            gene_length=gene_length
+        )
 
     def __str__(self):
         return data.__str__()
@@ -36,6 +71,6 @@ if __name__ == "__main__":
         500,
         1000,
     ]
-    print(edgePy(data).norm.cpm())
-    print(edgePy.norm.cpm(data=data))
-    print(edgePy.norm.rpkm(data=data, gene_length=[1000, 500, 1000]))
+    edge = edgePy(data)
+    print(edge.do_cpm())
+    print(edge.do_rpkm(gene_length=100))
