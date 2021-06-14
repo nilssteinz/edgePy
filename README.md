@@ -7,3 +7,7 @@ The other EdgePy project died, and I want to improve my python skills and want t
 Will start with the easy parts and slowly start to implement the harder code.
 will try to keep the code clean and documented. Also trying to use test driven design for the project.
 
+#TODO: 
+tox
+coverage
+continuous integration

@@ -1,3 +1,21 @@
+
+"""
+python version of the edgeR package.
+Copyright (C) 2021 Nils Steinz <nils.steinz@hotmail.com>
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+ License as published by the Free Software Foundation, either version 3 of the License,
+  or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with this program.
+ If not, see <https://www.gnu.org/licenses/>.
+"""
+
+
 import copy
 
 import numpy as np
@@ -65,24 +83,24 @@ class norm:
     def __rpkm(
         self,
         data: pd.DataFrame = None,
+        normalized_lib_size: bool = False,
         log: bool = False,
-        gene_length: list or pd.DataFrame = None,
         prior_count: int = 2,
+        gene_length: pd.Series or pd.DataFrame = None,
     ) -> pd.DataFrame:
-        """
-
-        :param prior_count:
-        :param data:
-        :param log:
-        :param gene_length:
-        :param prior_count:
-        :return:
-        """
-        k_b = gene_length / 1000
-        data = data / (k_b)
+        lib_size: pd.DataFrame = data.sum(axis=0)
+        if normalized_lib_size:
+            lib_size = self.factor.to_numpy()[0] * lib_size
+        adjusted_prior_count = (
+            (int(log) * prior_count) * len(data.columns) * lib_size / lib_size.sum()
+        )
+        adjusted_lib_size = lib_size + 2 * adjusted_prior_count
+        data: pd.DataFrame = (data + int(log) * adjusted_prior_count) / (
+            adjusted_lib_size
+        ) * 1000000 / (gene_length / 1000)
         if log:
-            return np.log2(data)
-        return data
+            return np.log2(data).__round__(self.round_value)
+        return data.__round__(self.round_value)
 
     def __lib_select(
         self, data: pd.DataFrame = None, lib_size: pd.Index or slice = None
@@ -146,7 +164,12 @@ class norm:
         if gene_length == None:
             raise UserWarning("gene_length empty. must have a list or DataFrame")
         data_cp = self.__lib_select(data, lib_size)
-        data_cp = self.__cpm(data_cp, normalized_lib_size, log, prior_count=prior_count)
-        self.rpkm_result = self.__rpkm(data_cp, log=log, gene_length=gene_length)
+        self.rpkm_result = self.__rpkm(
+            data_cp,
+            log=log,
+            gene_length=gene_length,
+            prior_count=prior_count,
+            normalized_lib_size=normalized_lib_size,
+        )
         self.run = True
         return self.rpkm_result
