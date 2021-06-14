@@ -2,7 +2,7 @@ import copy
 
 import pandas as pd
 
-from norm import norm
+from edgePy.norm import norm
 
 
 class edgePy(object):
@@ -38,4 +38,4 @@ if __name__ == "__main__":
     ]
     print(edgePy(data).norm.cpm())
     print(edgePy.norm.cpm(data=data))
-    print(edgePy.norm.rmpk(data=data, gene_length=[1000, 500, 1000]))
+    print(edgePy.norm.rpkm(data=data, gene_length=[1000, 500, 1000]))

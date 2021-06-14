@@ -8,10 +8,10 @@ class norm:
     """
 
     """
-    def __init__(self, data: pd.DataFrame = None):
+    def __init__(self, data: pd.DataFrame = None) -> None:
         self.data = data
 
-    def set_data(self, data: pd.DataFrame):
+    def set_data(self, data: pd.DataFrame) -> None:
         """
 
         :param data:
@@ -27,28 +27,28 @@ class norm:
         normalized_lib_size: bool = False,
         log: bool = False,
         prior_count: float = 2,
-    ):
+    ) -> pd.DataFrame:
         """
 
         :param data:
         :param normalized_lib_size:
         :param log:
         :param prior_count:
-        :return:
+        :return: data
         """
         lib_size = data.sum(axis=0)
-        adjusted_lib_size = lib_size + 2 * (prior_count * lib_size / lib_size.mean())
-        data = data / (adjusted_lib_size) * 100000
+        adjusted_lib_size = lib_size + len(data.index) * (prior_count * lib_size / lib_size.sum())
+        data = data / (adjusted_lib_size) * 1000000
         if log:
-            return np.log2(data)
-        return data
+            return np.log2(data).__round__(5)
+        return data.__round__(5)
 
-    def __rmpk(
+    def __rpkm(
         self,
         data: pd.DataFrame = None,
         log: bool = False,
         gene_length: list or pd.DataFrame = None,
-    ):
+    ) -> pd.DataFrame:
         """
 
         :param data:
@@ -56,14 +56,13 @@ class norm:
         :param gene_length:
         :return:
         """
-        for x in data.index:
-            k_b = gene_length[x] / 1000
-            data.loc[x, :] = data.loc[x, :] / (k_b)
+        k_b = gene_length / 1000
+        data = data / (k_b)
         if log:
             return np.log(data)
         return data
 
-    def __lib_select(self, data: pd.DataFrame = None, lib_size: pd.Index or slice = None):
+    def __lib_select(self, data: pd.DataFrame = None, lib_size: pd.Index or slice = None) -> pd.DataFrame:
         """
 
         :param data:
@@ -84,7 +83,7 @@ class norm:
         lib_size: pd.Index or slice = None,
         log: bool = False,
         prior_count: float = 0,
-    ):
+    ) -> pd.DataFrame:
         """
 
         :param data:
@@ -102,20 +101,22 @@ class norm:
 
         return data_cp
 
-    def rmpk(
+    def rpkm(
         self,
         data: pd.DataFrame = None,
         normalized_lib_size: bool = False,
         lib_size: pd.Index or slice = None,
         log: bool = False,
         prior_count: float = 0,
-        gene_length: list = None,
-    ):
+        gene_length: int = None,
+    ) -> pd.DataFrame:
+        if gene_length == None:
+            raise UserWarning("gene_lenght empty. must have a list or DataFrame")
         data_cp = self.__lib_select(data, lib_size)
         data_cp = self.__cpm(
             data_cp, normalized_lib_size, log=False, prior_count=prior_count
         )
-        data = self.__rmpk(data_cp, log, gene_length)
+        data = self.__rpkm(data_cp, log, gene_length)
 
         return data
 

@@ -9,6 +9,7 @@ from edgePy.norm import norm
 
 class test_norm(unittest.TestCase):
     def setUp(self) -> None:
+        self.main_data = pd.read_csv("../data/data.txt", index_col=0, sep="\t")
         self.Norm = norm()
 
     def tearDown(self) -> None:
@@ -20,7 +21,6 @@ class test_norm(unittest.TestCase):
 
         """
         self.assertEqual(self.Norm.data, None)
-
         data = pd.DataFrame([[10, 10], [10, 10]])
         self.Norm.set_data(data)
         testing.assert_frame_equal(self.Norm.data, data)
@@ -44,18 +44,18 @@ class test_norm(unittest.TestCase):
         self.assertTrue(type(e.exception) in [ArithmeticError])
 
 
-    def test_CPM(self):
-        data = None
+    def test_CPM_non_norm(self):
+        data = self.main_data.copy()
         result = norm().cpm(data)
-        target = None
-        self.assertEqual(result, target)
+        target = 2.751621e+01
+        self.assertEqual(target,result.iloc[0,0], "CPM calcualtions are off")
         pass
 
-    def test_rmpk(self):
-        data = None
-        result = norm().rmpk(data)
-        target = None
-        self.assertEqual(result, target)
+    def test_rpkm_non_norm(self):
+        data = self.main_data.copy()
+        result = norm().rpkm(data, gene_length=100)
+        target = 2.751621e+02
+        self.assertEqual(target,result.iloc[0,0], "RMPK calcualtions are off")
         pass
 
 
