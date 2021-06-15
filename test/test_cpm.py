@@ -132,6 +132,15 @@ class test_norm(unittest.TestCase):
         result = self.Norm.rpkm(data=self.main_data, gene_length=100)
         testing.assert_frame_equal(self.Norm__.rpkm_result, result)
 
+    def test_rpkm_norm_log(self):
+        data = self.main_data.copy()
+        self.Norm.set_factor(self.main_factor)
+        result = self.Norm.rpkm(
+            data, normalized_lib_size=True, gene_length=100, log=True
+        )
+        target = 2.6445338e02
+        self.assertEqual(target, result.iloc[0, 0], "rpkm(norm=T, log=T) calcualtions are off")
+
 
 if __name__ == "__main__":
     unittest.main()
