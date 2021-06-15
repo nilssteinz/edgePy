@@ -8,6 +8,8 @@ from pandas import testing
 from edgePy.cpm import CPM
 
 DIR_PATH = os.path.split(os.getcwd())[0]
+if "edgePy" not in DIR_PATH:
+    DIR_PATH += "/edgePy"
 
 
 class test_norm(unittest.TestCase):
