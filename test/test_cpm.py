@@ -10,7 +10,6 @@ from edgePy.cpm import CPM
 DIR_PATH = os.path.split(os.getcwd())[0]
 
 
-
 class test_norm(unittest.TestCase):
     def setUp(self) -> None:
 
@@ -116,13 +115,13 @@ class test_norm(unittest.TestCase):
         self.Norm__ = CPM(self.main_data)
         self.Norm__.cpm()
         target = 2.751621e01
-        self.assertEqual(target, self.Norm__.cpm_result.iloc[0,0])
+        self.assertEqual(target, self.Norm__.cpm_result.iloc[0, 0])
 
     def test_usage_self_data_rpkm(self):
         self.Norm__ = CPM(self.main_data)
         self.Norm__.rpkm(gene_length=100)
         target = 2.7516207e02
-        self.assertEqual(target, self.Norm__.rpkm_result.iloc[0,0])
+        self.assertEqual(target, self.Norm__.rpkm_result.iloc[0, 0])
 
     def test_rpkm_norm_log(self):
         data = self.main_data.copy()
