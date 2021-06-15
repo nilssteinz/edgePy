@@ -1,17 +1,32 @@
+from __future__ import annotations
 import copy
-
 import pandas as pd
 
-from cpm import cpm
+from cpm import CPM
 
 
-class edgePy(object):
-    norm = cpm()
+class EdgePy(object):
+    """
+    EdgePy main controller.
 
-    def __init__(self, data: pd.DataFrame):
+    """
+    CPM = CPM()
+
+    def __init__(self, data: pd.DataFrame, classes: pd.Index = None):
+        """
+        The beginning of an EdgePy analysis.
+
+        Parameters
+        ----------
+        data : pd.DataFrame
+            This is the raw data from an RNA-seq experiment.
+        classes: pd.Index
+            The
+
+        """
         self.data = copy.deepcopy(data)
         self.norm_data = None
-        self.factor = [1] * len(data.columns)
+        self.factor = pd.DataFrame([1] * len(data.columns))
         print(self.factor)
 
     def do_cpm(
@@ -20,15 +35,16 @@ class edgePy(object):
         lib_size: pd.Index or slice = None,
         log: bool = False,
         prior_count: float = 2,
-    ) -> None:
-        self.norm.set_data(self.data)
-        self.norm.set_factor(self.factor)
-        self.norm_data = self.norm.cpm(
+    ) -> EdgePy:
+        self.CPM.set_data(self.data)
+        self.CPM.set_factor(self.factor)
+        self.norm_data = self.CPM.cpm(
             normalized_lib_size=normalized_lib_size,
             lib_size=lib_size,
             log=log,
             prior_count=prior_count,
         )
+        return self
 
     def do_rpkm(
         self,
@@ -36,21 +52,21 @@ class edgePy(object):
         lib_size: pd.Index or slice = None,
         log: bool = False,
         prior_count: float = 2,
-        gene_length: int = None,
-    ) -> None:
-        self.norm.set_data(self.data)
-        self.norm.set_factor(self.factor)
-        self.norm_data = self.norm.rpkm(
+        gene_length: pd.DataFrame = None,
+    ) -> EdgePy:
+        """
+
+        """
+        self.CPM.set_data(self.data)
+        self.CPM.set_factor(self.factor)
+        self.norm_data = self.CPM.rpkm(
             normalized_lib_size=normalized_lib_size,
             lib_size=lib_size,
             log=log,
             prior_count=prior_count,
             gene_length=gene_length,
         )
-
-    def __str__(self):
-        return data.__str__()
-
+        return self
 
 if __name__ == "__main__":
     data = pd.DataFrame([[100, 100], [50, 150], [100, 50]])
@@ -71,6 +87,7 @@ if __name__ == "__main__":
         500,
         1000,
     ]
-    edge = edgePy(data)
+    edge = EdgePy(data)
     print(edge.do_cpm())
-    print(edge.do_rpkm(gene_length=100))
+    print(edge.do_rpkm(gene_length=pd.DataFrame([100])).norm_data)
+    print(edge.CPM.cpm(data))
