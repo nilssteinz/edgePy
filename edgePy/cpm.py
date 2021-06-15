@@ -1,5 +1,6 @@
 
 """
+
 python version of the edgeR package.
 Copyright (C) 2021 Nils Steinz <nils.steinz@hotmail.com>
 
@@ -32,6 +33,11 @@ class norm:
     def __init__(
         self, data: pd.DataFrame = None, factor: list or pd.DataFrame = None
     ) -> None:
+        """
+
+        :param data:
+        :param factor:
+        """
         self.data = data
         self.factor = factor
         self.run: bool = False
@@ -44,11 +50,13 @@ class norm:
         :param data:
         :return:
         """
-        if type(data) != pd.DataFrame:
+        if not isinstance(data, pd.DataFrame):
             raise TypeError("not a DataFrame used")
         self.data = data
 
-    def set_factor(self, factor: list or pd.DataFrame = None) -> None:
+    def set_factor(self, factor: list or pd.DataFrame) -> None:
+        if not isinstance(factor, pd.DataFrame):
+            raise TypeError("not a DataFrame used")
         self.factor = factor
 
     def __cpm(
@@ -102,8 +110,9 @@ class norm:
             return np.log2(data).__round__(self.round_value)
         return data.__round__(self.round_value)
 
+    @staticmethod
     def __lib_select(
-        self, data: pd.DataFrame = None, lib_size: pd.Index or slice = None
+        data: pd.DataFrame = None, lib_size: pd.Index or slice = None
     ) -> pd.DataFrame:
         """
 
@@ -149,7 +158,7 @@ class norm:
         lib_size: pd.Index or slice = None,
         log: bool = False,
         prior_count: float = 2,
-        gene_length: int = None,
+        gene_length: list or pd.DataFrame = None,
     ) -> pd.DataFrame:
         """
 
@@ -161,8 +170,10 @@ class norm:
         :param gene_length:
         :return:
         """
+        if data is None:
+            data = self.data
         if gene_length == None:
-            raise UserWarning("gene_length empty. must have a list or DataFrame")
+            raise TypeError("gene_length empty. must have a list or DataFrame")
         data_cp = self.__lib_select(data, lib_size)
         self.rpkm_result = self.__rpkm(
             data_cp,

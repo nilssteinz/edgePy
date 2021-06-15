@@ -17,7 +17,7 @@ class test_norm(unittest.TestCase):
         self.main_data = pd.read_csv(DIR_PATH+"/data/data.txt", index_col=0, sep="\t")
         self.main_factor = pd.read_csv(DIR_PATH+"/data/factors.txt", dtype=float, header=None)
         self.Norm = norm()
-        self.Norm.set_factor(self.main_factor)
+
 
     def tearDown(self) -> None:
         pass
@@ -25,12 +25,31 @@ class test_norm(unittest.TestCase):
     def test_set_data(self):
         """
 
-
         """
         self.assertEqual(self.Norm.data, None)
         data = pd.DataFrame([[10, 10], [10, 10]])
         self.Norm.set_data(data)
         testing.assert_frame_equal(self.Norm.data, data)
+
+    def test_set_data_fail(self):
+        with self.assertRaises(Exception) as e:
+            self.Norm.set_data(0)
+        self.assertIsInstance(e.exception, (TypeError,))
+
+
+    def test_set_factor(self):
+        """
+
+        """
+        self.assertEqual(self.Norm.factor, None)
+        data = pd.DataFrame([10, 10, 10, 10])
+        self.Norm.set_factor(data)
+        testing.assert_frame_equal(self.Norm.factor, data)
+
+    def test_set_factor_fail(self):
+        with self.assertRaises(Exception) as e:
+            self.Norm.set_factor(0)
+        self.assertIsInstance(e.exception, (TypeError,))
 
     def test_lib_size_cut_off_correct(self):
         data = pd.DataFrame(np.arange(0, 10))
@@ -66,6 +85,7 @@ class test_norm(unittest.TestCase):
 
     def test_CPM_norm(self):
         data = self.main_data.copy()
+        self.Norm.set_factor(self.main_factor)
         result = self.Norm.cpm(data, normalized_lib_size=True)
         target = 2.644534e01
         self.assertEqual(target, result.iloc[0, 0], "CPM calcualtions are off")
@@ -88,11 +108,29 @@ class test_norm(unittest.TestCase):
 
     def test_rpkm_norm(self):
         data = self.main_data.copy()
+        self.Norm.set_factor(self.main_factor)
         result = self.Norm.rpkm(
             data, normalized_lib_size=True, gene_length=100
         )
         target = 2.6445338e02
         self.assertEqual(target, result.iloc[0, 0], "rpkm(norm=T) calcualtions are off")
+
+    def test_rpkm_fail(self):
+        with self.assertRaises(Exception) as e:
+            self.Norm.rpkm(gene_length=None)
+        self.assertIsInstance(e.exception, (TypeError,))
+
+    def test_usage_self_data_cpm(self):
+        self.Norm__ = norm(self.main_data)
+        self.Norm__.cpm()
+        result = self.Norm.cpm(self.main_data)
+        testing.assert_frame_equal(self.Norm__.cpm_result, result)
+
+    def test_usage_self_data_rpkm(self):
+        self.Norm__ = norm(self.main_data)
+        self.Norm__.rpkm(gene_length=100)
+        result = self.Norm.rpkm(data=self.main_data, gene_length=100)
+        testing.assert_frame_equal(self.Norm__.rpkm_result, result)
 
 
 if __name__ == "__main__":
