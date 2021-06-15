@@ -14,6 +14,7 @@ will try to keep the code clean and documented. Also trying to use test driven d
 
 https://ucdavis-bioinformatics-training.github.io/2018-June-RNA-Seq-Workshop/thursday/DE.html
 is used for the data and expected results.
-#TODO: 
+
+##TODO: 
 tox \
 coverage

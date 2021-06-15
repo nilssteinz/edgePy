@@ -1,1 +1,1 @@
-"""The edgeR python package"""
+"""The edgeR python package."""

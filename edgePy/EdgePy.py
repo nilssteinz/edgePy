@@ -1,3 +1,20 @@
+"""
+The EdgePy controller.
+
+Copyright (C) 2021 Nils Steinz <nils.steinz@hotmail.com>
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public
+ License as published by the Free Software Foundation, either version 3 of the License,
+  or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+ without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with this program.
+ If not, see <https://www.gnu.org/licenses/>.
+"""
+
 from __future__ import annotations
 import copy
 import pandas as pd
@@ -8,7 +25,9 @@ from NormFactor import NormFactor
 
 class EdgePy(object):
     """EdgePy main controller.
-       -----------------------
+
+    -----------------------
+
 
 
     """
@@ -18,7 +37,7 @@ class EdgePy(object):
 
     def __init__(self, data: pd.DataFrame, classes: pd.Index = None):
         """
-        The beginning of an EdgePy analysis.
+        Beginning of an EdgePy analysis.
 
         Parameters
         ----------
@@ -40,6 +59,7 @@ class EdgePy(object):
         log: bool = False,
         prior_count: float = 2,
     ) -> EdgePy:
+        """Execute the CPM for the data in the controller."""
         self.CPM.set_data(self.data)
         self.CPM.set_factor(self.factor)
         self.norm_data = self.CPM.cpm(
@@ -58,9 +78,7 @@ class EdgePy(object):
         prior_count: float = 2,
         gene_length: pd.DataFrame = None,
     ) -> EdgePy:
-        """
-
-        """
+        """Execute the RPKM for the data in the controller."""
         self.CPM.set_data(self.data)
         self.CPM.set_factor(self.factor)
         self.norm_data = self.CPM.rpkm(
