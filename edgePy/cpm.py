@@ -1,6 +1,4 @@
-
-"""
-python version of the edgeR package CPM <Counts Per Million>.
+"""python version of the edgeR package CPM <Counts Per Million>.
 
 Copyright (C) 2021 Nils Steinz <nils.steinz@hotmail.com>
 
@@ -29,9 +27,14 @@ class CPM:
     -------------------------------------------------------------
 
 
+    
+
+    parameters
+    ----------
+    round_results: int
     """
 
-    round_value = 5
+    round_results: int = 5
 
     def __init__(
         self, data: pd.DataFrame = None, factor: list or pd.DataFrame = None
@@ -43,7 +46,6 @@ class CPM:
         """
         self.data = data
         self.factor = factor
-        self.run: bool = False
         self.rpkm_result = None
         self.cpm_result = None
 
@@ -58,48 +60,42 @@ class CPM:
         self.data = data
 
     def set_factor(self, factor: list or pd.DataFrame) -> None:
+        """
+
+        :param factor:
+        :return:
+        """
         if not isinstance(factor, pd.DataFrame):
             raise TypeError("not a DataFrame used")
         self.factor = factor
 
-    def __rpkm(
+    def __calculations(
         self,
         data: pd.DataFrame = None,
+        lib_size: pd.DataFrame = None,
         normalized_lib_size: bool = False,
         log: bool = False,
         prior_count: float = 2,
         gene_length: pd.Series or pd.DataFrame = 1000,
     ) -> pd.DataFrame:
-        lib_size: pd.DataFrame = data.sum(axis=0)
+        if lib_size is None:
+            lib_size: pd.DataFrame = data.sum(axis=0)
         if normalized_lib_size:
             lib_size = self.factor.to_numpy()[0] * lib_size
+
         adjusted_prior_count = (
             (int(log) * prior_count) * len(data.columns) * lib_size / lib_size.sum()
         )
         adjusted_lib_size = lib_size + 2 * adjusted_prior_count
-        data: pd.DataFrame = (data + int(log) * adjusted_prior_count) / (
-            adjusted_lib_size
-        ) * 1000000 / (gene_length / 1000)
+        data: pd.DataFrame = (
+            (
+                (data + int(log) * adjusted_prior_count) / (adjusted_lib_size) * 1000000
+            ).transpose()
+            / (gene_length / 1000)
+        ).transpose()
         if log:
-            return np.log2(data).__round__(self.round_value)
-        return data.__round__(self.round_value)
-
-    @staticmethod
-    def __lib_select(
-        data: pd.DataFrame = None, lib_size: pd.Index or slice = None
-    ) -> pd.DataFrame:
-        """
-
-        :param data:
-        :param lib_size:
-        :return:
-        """
-        data_cp = copy.deepcopy(data)
-        if lib_size:
-            data_cp = data_cp.iloc[lib_size]
-        if len(data_cp.index) < 2:
-            raise ArithmeticError("data set is to small for Normalisation")
-        return data_cp
+            return np.log2(data).__round__(self.round_results)
+        return data.__round__(self.round_results)
 
     def cpm(
         self,
@@ -118,11 +114,20 @@ class CPM:
         :param prior_count:
         :return:
         """
+        if normalized_lib_size and self.factor is None:
+            raise NotImplementedError(
+                "cannot use 'normalized_lib_size' without factor values."
+            )
         if data is None:
             data = self.data
-        data_cp = self.__lib_select(data, lib_size)
-        self.cpm_result = self.__rpkm(data_cp, normalized_lib_size, log, prior_count)
-        self.run = True
+        data_cp = data.copy()
+        self.cpm_result = self.__calculations(
+            data=data_cp,
+            lib_size=lib_size,
+            normalized_lib_size=normalized_lib_size,
+            log=log,
+            prior_count=prior_count,
+        )
         return self.cpm_result
 
     def rpkm(
@@ -134,27 +139,41 @@ class CPM:
         prior_count: float = 2,
         gene_length: list or pd.DataFrame = None,
     ) -> pd.DataFrame:
-        """
+        """Reads per kilobase million
 
-        :param data:
-        :param normalized_lib_size:
-        :param lib_size:
-        :param log:
-        :param prior_count:
-        :param gene_length:
-        :return:
+
+
+        Parameters
+        ----------
+        :param data: pd.Dataframe
+            Read counts DataFrame.
+        :param normalized_lib_size: boolean
+            Use normalization factor to adjust the library size.
+        :param lib_size: pd.DataFrame
+            A Dataframe that contains the library size of the reads.
+        :param log: boolean
+        :param prior_count: float
+            value added to remedy -inf with log. only functions when Log=True.
+        :param gene_length: pd.DataFrame
+            A list that contains the size of all the genes used in the data to
+        :return: pd.DataFrame
+            returns a DataFrame of same size as input where the reads per kilobase million has been calculated.
+
         """
-        if data is None:
-            data = self.data
-        if isinstance(gene_length, (type(None), )):
+        if normalized_lib_size and self.factor is None:
+            raise NotImplementedError(
+                "cannot use 'normalized_lib_size' without factor values."
+            )
+        elif isinstance(gene_length, (type(None),)):
             raise TypeError("gene_length empty. must have a list or DataFrame")
-        data_cp = self.__lib_select(data, lib_size)
-        self.rpkm_result = self.__rpkm(
+        elif data is None:
+            data = self.data
+        data_cp = data.copy()
+        self.rpkm_result = self.__calculations(
             data_cp,
             log=log,
             gene_length=gene_length,
             prior_count=prior_count,
             normalized_lib_size=normalized_lib_size,
         )
-        self.run = True
         return self.rpkm_result

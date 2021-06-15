@@ -3,14 +3,17 @@ import copy
 import pandas as pd
 
 from cpm import CPM
+from NormFactor import NormFactor
 
 
 class EdgePy(object):
-    """
-    EdgePy main controller.
+    """EdgePy main controller.
+       -----------------------
+
 
     """
     CPM = CPM()
+    NormFactor = NormFactor()
 
     def __init__(self, data: pd.DataFrame, classes: pd.Index = None):
         """

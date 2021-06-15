@@ -9,7 +9,7 @@ setuptools.setup(
     author="Nils Steinz",
     author_email="nilssteinz@hotamil.com.com",
     description="an EdgeR in python package",
-    long_description=open("README.md", "r").read(),
+    long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/nilssteinz/edgePy",
     project_urls={
