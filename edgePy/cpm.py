@@ -1,4 +1,5 @@
-"""python version of the edgeR package CPM <Counts Per Million>.
+"""
+python version of the edgeR package CPM <Counts Per Million>.
 
 Copyright (C) 2021 Nils Steinz <nils.steinz@hotmail.com>
 
@@ -14,9 +15,6 @@ You should have received a copy of the GNU General Public License along with thi
  If not, see <https://www.gnu.org/licenses/>.
 """
 
-
-import copy
-
 import numpy as np
 import pandas as pd
 
@@ -24,9 +22,9 @@ import pandas as pd
 class CPM:
     """
     python version of the edgeR package CPM <Counts Per Million>.
+
     -------------------------------------------------------------
-
-
+    counts per million and reads per kilobase million
     
 
     parameters
@@ -40,6 +38,7 @@ class CPM:
         self, data: pd.DataFrame = None, factor: list or pd.DataFrame = None
     ) -> None:
         """
+        Set up the variables to use it as an class that can execute very nicely.
 
         :param data:
         :param factor:
@@ -51,6 +50,7 @@ class CPM:
 
     def set_data(self, data: pd.DataFrame) -> None:
         """
+        Set the data to the new pandas dataframe.
 
         :param data:
         :return:
@@ -61,6 +61,7 @@ class CPM:
 
     def set_factor(self, factor: list or pd.DataFrame) -> None:
         """
+         Set the multiplication factor to a new pandas dataframe.
 
         :param factor:
         :return:
@@ -106,6 +107,7 @@ class CPM:
         prior_count: float = 2,
     ) -> pd.DataFrame:
         """
+        Calculate the Counts Per Million.
 
         :param data:
         :param normalized_lib_size:
@@ -139,8 +141,10 @@ class CPM:
         prior_count: float = 2,
         gene_length: list or pd.DataFrame = None,
     ) -> pd.DataFrame:
-        """Reads per kilobase million
+        """
+        Calculate Reads per kilobase million.
 
+        -------------------------------------
 
 
         Parameters

@@ -1,0 +1,1 @@
+"""The edgeR python package"""

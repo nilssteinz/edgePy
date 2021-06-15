@@ -1,7 +1,5 @@
 import os
 import unittest
-
-import numpy as np
 import pandas as pd
 from pandas import testing
 
@@ -48,7 +46,6 @@ class test_norm(unittest.TestCase):
         with self.assertRaises(Exception) as e:
             self.Norm.set_factor(0)
         self.assertIsInstance(e.exception, (TypeError,))
-
 
     def test_CPM_not_norm(self):
         data = self.data.copy()

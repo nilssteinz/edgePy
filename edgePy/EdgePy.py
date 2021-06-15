@@ -12,6 +12,7 @@ class EdgePy(object):
 
 
     """
+
     CPM = CPM()
     NormFactor = NormFactor()
 
@@ -70,6 +71,7 @@ class EdgePy(object):
             gene_length=gene_length,
         )
         return self
+
 
 if __name__ == "__main__":
     data = pd.DataFrame([[100, 100], [50, 150], [100, 50]])
