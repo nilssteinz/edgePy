@@ -2,11 +2,11 @@ import copy
 
 import pandas as pd
 
-from cpm import norm
+from cpm import cpm
 
 
 class edgePy(object):
-    norm = norm()
+    norm = cpm()
 
     def __init__(self, data: pd.DataFrame):
         self.data = copy.deepcopy(data)
