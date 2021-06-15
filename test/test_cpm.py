@@ -4,6 +4,7 @@ import unittest
 import numpy as np
 import pandas as pd
 from pandas import testing
+import pytest
 
 from edgePy.cpm import norm
 
@@ -11,13 +12,15 @@ DIR_PATH = os.path.split(os.getcwd())[0]
 if "edgePy" not in DIR_PATH:
     DIR_PATH += "/edgePy"
 
+
 class test_norm(unittest.TestCase):
     def setUp(self) -> None:
 
-        self.main_data = pd.read_csv(DIR_PATH+"/data/data.txt", index_col=0, sep="\t")
-        self.main_factor = pd.read_csv(DIR_PATH+"/data/factors.txt", dtype=float, header=None)
+        self.main_data = pd.read_csv(DIR_PATH + "/data/data.txt", index_col=0, sep="\t")
+        self.main_factor = pd.read_csv(
+            DIR_PATH + "/data/factors.txt", dtype=float, header=None
+        )
         self.Norm = norm()
-
 
     def tearDown(self) -> None:
         pass
@@ -35,7 +38,6 @@ class test_norm(unittest.TestCase):
         with self.assertRaises(Exception) as e:
             self.Norm.set_data(0)
         self.assertIsInstance(e.exception, (TypeError,))
-
 
     def test_set_factor(self):
         self.assertEqual(self.Norm.factor, None)
@@ -91,7 +93,9 @@ class test_norm(unittest.TestCase):
     def test_rpkm_not_norm_log(self):
         data = self.main_data.copy()
         self.Norm.round_value = 7
-        result = self.Norm.rpkm(data, normalized_lib_size=False, log=True, gene_length=100)
+        result = self.Norm.rpkm(
+            data, normalized_lib_size=False, log=True, gene_length=100
+        )
         target = 8.1144958
         self.assertEqual(
             target, result.iloc[0, 0], "rpkm(norm=F, log=T) calcualtions are off"
@@ -101,9 +105,7 @@ class test_norm(unittest.TestCase):
     def test_rpkm_norm(self):
         data = self.main_data.copy()
         self.Norm.set_factor(self.main_factor)
-        result = self.Norm.rpkm(
-            data, normalized_lib_size=True, gene_length=100
-        )
+        result = self.Norm.rpkm(data, normalized_lib_size=True, gene_length=100)
         target = 2.6445338e02
         self.assertEqual(target, result.iloc[0, 0], "rpkm(norm=T) calcualtions are off")
 
@@ -131,7 +133,9 @@ class test_norm(unittest.TestCase):
             data, normalized_lib_size=True, gene_length=100, log=True
         )
         target = 2.6445338e02
-        self.assertEqual(target, result.iloc[0, 0], "rpkm(norm=T, log=T) calcualtions are off")
+        self.assertEqual(
+            target, result.iloc[0, 0], "rpkm(norm=T, log=T) calcualtions are off"
+        )
 
 
 if __name__ == "__main__":
